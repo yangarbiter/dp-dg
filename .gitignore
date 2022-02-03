@@ -1,0 +1,7 @@
+__pycache__
+build
+dist
+venv
+wilds.egg-info
+
+.ipynb_checkpoints
