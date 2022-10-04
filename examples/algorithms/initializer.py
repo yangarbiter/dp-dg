@@ -4,6 +4,7 @@ from algorithms.groupDRO import GroupDRO
 from algorithms.deepCORAL import DeepCORAL
 from algorithms.IRM import IRM
 from algorithms.IWERM import IWERM
+from algorithms.ERM_dpsgdf import ERMDPSGDf
 from configs.supported import algo_log_metrics
 from losses import initialize_loss
 
@@ -40,6 +41,14 @@ def initialize_algorithm(config, datasets, train_grouper):
 
     if config.algorithm == 'ERM':
         algorithm = ERM(
+            config=config,
+            d_out=d_out,
+            grouper=train_grouper,
+            loss=loss,
+            metric=metric,
+            n_train_steps=n_train_steps)
+    elif config.algorithm == 'ERMDPSGDf':
+        algorithm = ERMDPSGDf(
             config=config,
             d_out=d_out,
             grouper=train_grouper,

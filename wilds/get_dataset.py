@@ -17,6 +17,10 @@ def get_dataset(dataset, version=None, **dataset_kwargs):
     if dataset not in wilds.supported_datasets:
         raise ValueError(f'The dataset {dataset} is not recognized. Must be one of {wilds.supported_datasets}.')
 
+    if dataset == 'adult':
+        from wilds.datasets.adult_dataset import AdultDataset
+        return AdultDataset(version=version, **dataset_kwargs)
+
     if dataset == 'inaturalist':
         from wilds.datasets.iNaturalist_dataset import INaturalistDataset
         return INaturalistDataset(version=version, **dataset_kwargs)

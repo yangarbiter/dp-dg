@@ -4,6 +4,11 @@ algorithm_defaults = {
         'uniform_over_groups': False,
         'eval_loader': 'standard',
     },
+    'ERMDPSGDf': {
+        'train_loader': 'standard',
+        'uniform_over_groups': False,
+        'eval_loader': 'standard',
+    },
     'IWERM': {
         'train_loader': 'standard',
         'uniform_over_groups': False,

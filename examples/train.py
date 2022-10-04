@@ -70,7 +70,7 @@ def run_epoch(algorithm, dataset, general_logger, epoch, config, train):
 
     results['epoch'] = epoch
     if hasattr(algorithm, 'privacy_engine'):
-        assert config.enable_privacy
+        assert config.enable_privacy or config.enable_fair_privacy
         epsilon, best_alpha = algorithm.privacy_engine.accountant.get_privacy_spent(delta=config.delta)
         results['epsilon'] = epsilon
         results['delta'] = config.delta

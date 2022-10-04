@@ -1,4 +1,27 @@
 dataset_defaults = {
+    'adult': {
+        'split_scheme': 'official',
+        'model': 'logistic_regression',
+        'model_kwargs': {'in_features': 86},
+        'transform': None,
+        'loss_function': 'cross_entropy',
+        'algo_log_metric': 'accuracy',
+        'batch_size': 256,
+        'lr': 1 / math.sqrt(20),
+        'weight_decay': 0.01,
+        'n_epochs': 20,
+        'loader_kwargs': {
+            'num_workers': 1,
+            'pin_memory': True,
+        },
+        'scheduler': None,
+        'process_outputs_function': 'multiclass_logits_to_pred',
+        'groupby_fields': ['sex', 'y'],
+        'val_metric': 'acc_wg',
+        'val_metric_decreasing': False,
+        'optimizer': 'SGD',
+        'optimizer_kwargs': {'momentum': 0.9},
+    },
     'amazon': {
         'split_scheme': 'official',
         'model': 'distilbert-base-uncased',
@@ -227,7 +250,7 @@ dataset_defaults = {
     },
     'fmow': {
         'split_scheme': 'official',
-        'dataset_kwargs': {            
+        'dataset_kwargs': {
             'seed': 111,
             'use_ood_val': True
         },

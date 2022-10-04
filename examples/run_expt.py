@@ -20,6 +20,7 @@ from configs.utils import populate_defaults
 import configs.supported as supported
 
 import torch.multiprocessing
+from dpsgdf import FairPrivacyEngine
 
 def main():
 
@@ -32,6 +33,7 @@ def main():
     parser.add_argument('--root_dir', required=True,
                         help='The directory where [dataset]/data can be found (or should be downloaded to, if it does not exist).')
     parser.add_argument('--enable_privacy', default=False, action='store_true')
+    parser.add_argument('--enable_fair_privacy', default=False, action='store_true')
     parser.add_argument('--apply_noise', default=False, action='store_true')
 
     # Dataset
@@ -98,6 +100,8 @@ def main():
     parser.add_argument('--sigma', type=float, default=1.0)
     parser.add_argument('--max_per_sample_grad_norm', type=float, default=1.0)
     parser.add_argument('--delta', type=float, default=1e-5)
+    parser.add_argument('--sigma2', type=float, default=1.0)
+    parser.add_argument('--C0', type=float, default=1.0)
 
     # Scheduler
     parser.add_argument('--scheduler', choices=supported.schedulers)
@@ -264,7 +268,7 @@ def main():
         config=config,
         datasets=datasets,
         train_grouper=train_grouper)
-    
+
     if config.enable_privacy:
         privacy_engine = PrivacyEngine()
         algorithm.model, algorithm.optimizer, datasets['train']['loader'] = privacy_engine.make_private(
@@ -274,6 +278,25 @@ def main():
             poisson_sampling=False,
             noise_multiplier=config.sigma,
             max_grad_norm=config.max_per_sample_grad_norm,
+        )
+        algorithm.privacy_engine = privacy_engine
+
+    if config.enable_fair_privacy:
+        group_info, group_counts = train_grouper.metadata_to_group(
+            datasets['train']['dataset'].metadata_array, return_counts=True)
+        train_grouper
+        privacy_engine = FairPrivacyEngine()
+        algorithm.model, algorithm.optimizer, datasets['train']['loader'] = privacy_engine.make_private(
+            module=algorithm.model,
+            optimizer=algorithm.optimizer,
+            data_loader=datasets['train']['loader'],
+            poisson_sampling=False,
+            noise_multiplier=config.sigma,
+            max_grad_norm=config.max_per_sample_grad_norm,
+            group_info=group_info,
+            n_groups=len(group_counts),
+            C0=config.C0,
+            sigma2=config.sigma2,
         )
         algorithm.privacy_engine = privacy_engine
 
